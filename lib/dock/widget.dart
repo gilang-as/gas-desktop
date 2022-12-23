@@ -6,14 +6,14 @@ import '../example.dart';
 import '../toolbar/toolbar.dart';
 import '../pkg/window/wm.dart';
 
-class Dock extends StatefulWidget {
-  const Dock({Key? key}) : super(key: key);
+class DockWidget extends StatefulWidget {
+  const DockWidget({Key? key}) : super(key: key);
 
   @override
-  State<Dock> createState() => _DockState();
+  State<DockWidget> createState() => _DockWidgetState();
 }
 
-class _DockState extends State<Dock> {
+class _DockWidgetState extends State<DockWidget> {
   late int? hoveredIndex;
   late double baseItemHeight;
   late double baseTranslationY;
@@ -186,36 +186,36 @@ class _DockState extends State<Dock> {
                             ),
                             // 4.
                             child: FittedBox(
-                              fit: BoxFit.contain,
-                              // 5.
-                              child: AnimatedDefaultTextStyle(
-                                duration: const Duration(
-                                  milliseconds: 300,
-                                ),
-                                style: TextStyle(
-                                  fontSize: getScaledSize(index),
-                                ),
-                                child:GestureDetector(
-                                  onTap: () {
-                                    WindowHierarchy.of(
-                                      context,
-                                      listen: false,
-                                    ).addWindowEntry(entry.newInstance(
-                                      content: const ExampleApp(),
-                                      //eventHandler: LogWindowEventHandler(),
-                                    ));
+                                fit: BoxFit.contain,
+                                // 5.
+                                child: AnimatedDefaultTextStyle(
+                                  duration: const Duration(
+                                    milliseconds: 300,
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: getScaledSize(index),
+                                  ),
+                                  child:GestureDetector(
+                                    onTap: () {
+                                      WindowHierarchy.of(
+                                        context,
+                                        listen: false,
+                                      ).addWindowEntry(entry.newInstance(
+                                        content: const ExampleApp(),
+                                        //eventHandler: LogWindowEventHandler(),
+                                      ));
 
-                                    Provider.of<ToolbarDirectorState>(
-                                      context,
-                                      listen: false,
-                                    ).showLauncher = false;
-                                  },
-                                  child: Image.asset("icons/bin.png", height: 30, width: 30,),
-                                ),
+                                      Provider.of<ToolbarDirectorState>(
+                                        context,
+                                        listen: false,
+                                      ).showLauncher = false;
+                                    },
+                                    child: Image.asset("icons/bin.png", height: 30, width: 30,),
+                                  ),
                                 )
-                              ),
                             ),
-                          );
+                          ),
+                        );
                       },
                     ).toList(),
                   ),

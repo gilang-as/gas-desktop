@@ -68,7 +68,7 @@ class DefaultWindowBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Colors.black,
+        // color: Colors.black,
         border: Border.all(
           color: Colors.white,
         ),

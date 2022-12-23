@@ -65,12 +65,12 @@ class DefaultToolbar extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        border: Border.all(
-          color: Colors.white,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   color: Colors.black,
+      //   border: Border.all(
+      //     color: Colors.white,
+      //   ),
+      // ),
       child: Material(
         type: MaterialType.transparency,
         child: Row(

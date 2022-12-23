@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../shell.dart';
+import '../toolbar/toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -28,26 +28,21 @@ class _TaskbarState extends State<Taskbar> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 0,
+      top: 0,
       left: 0,
       height: 24,
       width: MediaQuery.of(context).size.width,
       child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.white,
-              offset: Offset(0, -1),
-            ),
-          ],
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.blueGrey.shade200.withOpacity(0.91),
         ),
         child: Row(
           children: [
             InkWell(
               onTap: () {
                 final provider =
-                Provider.of<ShellDirectorState>(context, listen: false);
+                Provider.of<ToolbarDirectorState>(context, listen: false);
                 provider.showLauncher = !provider.showLauncher;
               },
               child: SizedBox.fromSize(
@@ -173,11 +168,11 @@ class _DateWidgetState extends State<_DateWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       alignment: Alignment.center,
       child: Text(
-        DateFormat('EEE dd MMM HH:mm').format(date).toUpperCase(),
+        DateFormat('dd MMM HH:mm').format(date).toUpperCase(),
         style: const TextStyle(
-          fontSize: 14,
+          fontSize: 13,
           letterSpacing: 1,
-          color: Colors.white,
+          color: Colors.black87,
         ),
       ),
     );

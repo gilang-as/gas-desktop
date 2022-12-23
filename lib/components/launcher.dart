@@ -1,5 +1,5 @@
 import '../example.dart';
-import '../shell.dart';
+import '../toolbar/toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../pkg/window/wm.dart';
@@ -31,22 +31,10 @@ class Launcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.blueAccent,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white,
-            offset: Offset(1, -1),
-          ),
-          BoxShadow(
-            color: Colors.white,
-            offset: Offset(0, -1),
-          ),
-          BoxShadow(
-            color: Colors.white,
-            offset: Offset(1, 0),
-          ),
-        ],
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200.withOpacity(0.955),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -103,7 +91,7 @@ class Launcher extends StatelessWidget {
           //eventHandler: LogWindowEventHandler(),
         ));
 
-        Provider.of<ShellDirectorState>(
+        Provider.of<ToolbarDirectorState>(
           context,
           listen: false,
         ).showLauncher = false;

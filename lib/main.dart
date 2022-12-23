@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'dock/dock.dart';
 import 'package:collection/collection.dart';
-import 'shell.dart';
+import 'toolbar/toolbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
@@ -49,15 +50,19 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /* static const wallpaperEntry = WindowEntry(
-    features: [WallpaperWindowFeature()],
-    properties: {
-      WindowEntry.title: "Wallpaper layer",
-      WindowEntry.icon: null,
-      WallpaperWindowFeature.IMAGE: NetworkImage(
-          "https://assets.hongkiat.com/uploads/minimalist-dekstop-wallpapers/4k/original/18.jpg"),
-    },
-  ); */
+  // static const wallpaperEntry = WindowEntry(
+  //   features: [WallpaperWindowFeature()],
+  //   properties: {
+  //     WindowEntry.title: "Wallpaper layer",
+  //     WindowEntry.icon: null,
+  //     WindowEntry.showOnTaskbar: false,
+  //     WallpaperWindowFeature.image: NetworkImage( "https://www.bing.com/th?id=OHR.AnnecyXmas_ROW9241362359_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&qlt=50"),
+  //   },
+  //   layoutInfo: FreeformLayoutInfo(
+  //     fullscreen: true,
+  //     position: Offset.zero
+  //   ),
+  // );
   static const clockEntry = WindowEntry(
     features: [
       ResizeWindowFeature(),
@@ -66,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     layoutInfo: FreeformLayoutInfo(
       size: Size(300, 300),
       position: Offset.zero,
+      alwaysOnTop: true,
     ),
     properties: {
       WindowEntry.title: "Clock widget",
@@ -91,15 +97,31 @@ class _MyHomePageState extends State<MyHomePage> {
       WindowEntry.showOnTaskbar: false,
     },
   );
+  static const dockEntry = WindowEntry(
+    features: [],
+    layoutInfo: FreeformLayoutInfo(
+      size: Size.zero,
+      position: Offset.zero,
+      alwaysOnTop: true,
+      alwaysOnTopMode: AlwaysOnTopMode.systemOverlay,
+      fullscreen: true,
+    ),
+    properties: {
+      WindowEntry.id: 'toolbar',
+      WindowEntry.title: 'Shell toolbar',
+      WindowEntry.icon: null,
+      WindowEntry.showOnTaskbar: false,
+    },
+  );
   final WindowHierarchyController controller = WindowHierarchyController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      /* key.currentState?.addWindowEntry(
-        wallpaperEntry.newInstance(null),
-      ); */
+      // controller.addWindowEntry(
+      //   wallpaperEntry.newInstance(),
+      // );
       controller.addWindowEntry(
         clockEntry.newInstance(
           content: ClockWidget(
@@ -111,7 +133,15 @@ class _MyHomePageState extends State<MyHomePage> {
         toolbarEntry.newInstance(
           content: ChangeNotifierProvider.value(
             value: controller,
-            child: const ShellDirector(),
+            child: const ToolbarDirector(),
+          ),
+        ),
+      );
+      controller.addWindowEntry(
+        dockEntry.newInstance(
+          content: ChangeNotifierProvider.value(
+            value: controller,
+            child: const DockDirector(),
           ),
         ),
       );
@@ -129,12 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
           fit: BoxFit.cover,
         ),
         Scaffold(
-      body: WindowHierarchy(
-        controller: controller,
-        layoutDelegate: const FreeformLayoutDelegate(),
-      ),
-      backgroundColor: Colors.transparent,
-    ),
+          body: WindowHierarchy(
+            controller: controller,
+            layoutDelegate: const FreeformLayoutDelegate(),
+          ),
+          backgroundColor: Colors.transparent,
+        ),
       ],
     );
   }
@@ -148,10 +178,10 @@ class StaggeredLayoutDelegate extends LayoutDelegate {
 
   @override
   Widget layout(
-      BuildContext context,
-      List<LiveWindowEntry> entries,
-      List<String> focusHierarchy,
-      ) {
+    BuildContext context,
+    List<LiveWindowEntry> entries,
+    List<String> focusHierarchy,
+  ) {
     if (entries.isEmpty) return const SizedBox();
 
     return LayoutBuilder(
@@ -262,17 +292,17 @@ class StaggeredLayoutDelegate extends LayoutDelegate {
           children: entries
               .mapIndexed(
                 (index, e) => StaggeredGridTile.extent(
-              crossAxisCellCount: tiles[index].key,
-              mainAxisExtent:
-              tiles[index].value * hierarchy.wmBounds.height,
-              child: LayoutBuilder(
-                builder: (context, constraints) => MediaQuery(
-                  data: MediaQueryData(size: constraints.smallest),
-                  child: e.view,
+                  crossAxisCellCount: tiles[index].key,
+                  mainAxisExtent:
+                      tiles[index].value * hierarchy.wmBounds.height,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => MediaQuery(
+                      data: MediaQueryData(size: constraints.smallest),
+                      child: e.view,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          )
+              )
               .toList(),
         );
       },
@@ -282,17 +312,17 @@ class StaggeredLayoutDelegate extends LayoutDelegate {
 
 class WallpaperWindowFeature extends WindowFeature {
   static const WindowPropertyKey<ImageProvider?> image =
-  WindowPropertyKey("features.wallpaper.image", null);
+      WindowPropertyKey("features.wallpaper.image", null);
 
   const WallpaperWindowFeature();
 
   @override
   Widget build(BuildContext context, Widget content) {
     final WindowPropertyRegistry properties =
-    WindowPropertyRegistry.of(context);
+        WindowPropertyRegistry.of(context);
 
     final ImageProvider? image =
-    properties.maybeGet(WallpaperWindowFeature.image);
+        properties.maybeGet(WallpaperWindowFeature.image);
 
     return SizedBox.expand(
       child: image != null
@@ -303,8 +333,8 @@ class WallpaperWindowFeature extends WindowFeature {
 
   @override
   Set<WindowPropertyKey> get requiredProperties => {
-    WallpaperWindowFeature.image,
-  };
+        WallpaperWindowFeature.image,
+      };
 }
 
 class FreeDragWindowFeature extends WindowFeature {
@@ -467,7 +497,7 @@ class _ClockPainter extends CustomPainter {
     for (int i = 0; i < 60; i++) {
       final Offset point = getAngleFromValue(i, 60);
       final Offset pointLength =
-      i % 5 == 0 ? point - (point / 12) : point - (point / 36);
+          i % 5 == 0 ? point - (point / 12) : point - (point / 36);
       canvas.drawLine(
         center + point * (size.shortestSide / 2 * 0.95),
         center + pointLength * (size.shortestSide / 2 * 0.95),
@@ -480,11 +510,11 @@ class _ClockPainter extends CustomPainter {
   }
 
   Offset getAngleFromValue(
-      num value,
-      double max, [
-        num intervalFraction = 0,
-        int intervalStep = 5,
-      ]) {
+    num value,
+    double max, [
+    num intervalFraction = 0,
+    int intervalStep = 5,
+  ]) {
     final double fraction = value / max;
     final double degrees =
         (fraction * 360 + (intervalFraction * intervalStep)) - 90;
